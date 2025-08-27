@@ -1,0 +1,34 @@
+<h2>Buscador de Pilotos</h2>
+
+<div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+    <input type="text" nz-input placeholder="Buscar piloto por nombre, apellido o año..." [(ngModel)]="searchTerm" (ngModelChange)="onInputChange($event)" />
+  </nz-input-group>
+  <ng-template #suffixIconButton>
+    <button nz-button nzType="primary" nzSearch (click)="onManualSearch()">Buscar</button>
+  </ng-template>
+</div>
+
+<div *ngIf="drivers.length === 0 && searchTerm.length >= 4; else driversList" style="text-align: center; padding: 20px;">
+  <p>No se encontraron pilotos con el término de búsqueda.</p>
+</div>
+
+<div *ngIf="drivers.length === 0 && searchTerm.length < 4" style="text-align: center; padding: 20px;">
+  <p>Ingresa al menos 4 caracteres para iniciar la búsqueda automática o usa el botón para búsquedas más cortas.</p>
+</div>
+
+<ng-template #driversList>
+  <nz-list nzGrid>
+    <div nz-row [nzGutter]="[16, 16]">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6" *ngFor="let driver of drivers">
+        <nz-card [nzTitle]="driver.name + ' ' + driver.surname">
+          <p>Nacionalidad: {{ driver.nationality }}</p>
+          <p *ngIf="driver.number">Número: {{ driver.number }}</p>
+          <p *ngIf="driver.shortName">Nombre corto: {{ driver.shortName }}</p>
+          <p>Cumpleaños: {{ driver.birthday }}</p>
+          <a *ngIf="driver.url" [href]="driver.url" target="_blank">Más información</a>
+        </nz-card>
+      </div>
+    </div>
+  </nz-list>
+</ng-template>

@@ -1,0 +1,22 @@
+<h2>Equipos de Fórmula 1</h2>
+
+<div *ngIf="teams.length === 0; else teamsList" style="text-align: center; padding: 20px;">
+  <p>Cargando equipos...</p>
+</div>
+
+<ng-template #teamsList>
+  <nz-list nzGrid>
+    <div nz-row [nzGutter]="[16, 16]">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6" *ngFor="let team of teams">
+        <nz-card [nzTitle]="team.teamName">
+          <p>Nacionalidad: {{ team.teamNationality }}</p>
+          <p *ngIf="team.firstAppeareance">Primera aparición: {{ team.firstAppeareance }}</p>
+          <p *ngIf="team.constructorsChampionships">Campeonatos de constructores: {{ team.constructorsChampionships }}</p>
+          <p *ngIf="team.driversChampionships">Campeonatos de pilotos: {{ team.driversChampionships }}</p>
+          <button nz-button nzType="primary" [routerLink]="['/teams', team.teamId, 'drivers']">Ver Pilotos</button>
+          <a *ngIf="team.url" [href]="team.url" target="_blank" style="margin-left: 10px;">Más información del equipo</a>
+        </nz-card>
+      </div>
+    </div>
+  </nz-list>
+</ng-template>

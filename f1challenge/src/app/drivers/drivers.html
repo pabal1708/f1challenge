@@ -1,0 +1,21 @@
+<h2>Listado Completo de Pilotos</h2>
+
+<div *ngIf="drivers.length === 0; else driversList" style="text-align: center; padding: 20px;">
+  <p>Cargando pilotos...</p>
+</div>
+
+<ng-template #driversList>
+  <nz-list nzGrid>
+    <div nz-row [nzGutter]="[16, 16]">
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6" *ngFor="let driver of drivers">
+        <nz-card [nzTitle]="driver.name + ' ' + driver.surname">
+          <p>Nacionalidad: {{ driver.nationality }}</p>
+          <p *ngIf="driver.number">Número: {{ driver.number }}</p>
+          <p *ngIf="driver.shortName">Nombre corto: {{ driver.shortName }}</p>
+          <p>Cumpleaños: {{ driver.birthday }}</p>
+          <a *ngIf="driver.url" [href]="driver.url" target="_blank">Más información</a>
+        </nz-card>
+      </div>
+    </div>
+  </nz-list>
+</ng-template>
