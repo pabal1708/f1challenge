@@ -1,3 +1,15 @@
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
 
 /* You can add global styles to this file, and also import other style files */
+
+/* Estilos para títulos de sección */
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Estilo específico para títulos principales h2 */
+h2 {
+  margin-bottom: 35px;
+  font-weight: 600;
+}
