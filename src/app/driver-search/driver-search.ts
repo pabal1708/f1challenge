@@ -9,8 +9,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-driver-search',
@@ -60,7 +59,7 @@ export class DriverSearchComponent implements OnInit, OnDestroy {
     this.performSearch(this.searchTerm);
   }
 
-  // Lógica de búsqueda rea
+  // Lógica de búsqueda real
   performSearch(query: string): void {
     this.f1ApiService.searchDrivers(query).subscribe({
       next: (response: DriversApiResponse) => {
