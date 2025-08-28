@@ -9,37 +9,42 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-driver-search',
   standalone: true,
   imports: [CommonModule, FormsModule, NzListModule, NzCardModule, NzGridModule, NzInputModule, NzButtonModule],
   templateUrl: './driver-search.html',
-  styleUrl: './driver-search.css'
+  styleUrls: ['./driver-search.css']
 })
 export class DriverSearchComponent implements OnInit, OnDestroy {
+  year: number = 2024;
+  name: string = '';
+  surname: string = '';
+
+  private allDrivers: Driver[] = [];
   drivers: Driver[] = [];
-  searchTerm: string = '';
 
-  private searchTermChanged: Subject<string> = new Subject<string>();
-  private destroy$: Subject<void> = new Subject<void>();
+  private nameChanged = new Subject<string>();
+  private surnameChanged = new Subject<string>();
+  private yearChanged = new Subject<number>();
+  private destroy$ = new Subject<void>();
 
-  constructor(private f1ApiService: F1ApiService, private nzMessageService: NzMessageService) { }
+  loading = false;
+  searchedOnce = false;
+
+  constructor(private f1ApiService: F1ApiService, private msg: NzMessageService) {}
 
   ngOnInit(): void {
-    this.searchTermChanged.pipe(
-      debounceTime(500), // Espera 500ms después de la última pulsación de tecla
-      distinctUntilChanged(), // Solo emite si el valor actual es diferente al último
-      takeUntil(this.destroy$)
-    ).subscribe((query) => {
-      if (query.trim().length >= 4) {
-        this.performSearch(query);
-      } else if (query.trim().length === 0) {
-        this.drivers = []; // Limpiar la lista si el campo está vacío
-      }
-    });
+    this.nameChanged.pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.filterDrivers());
+
+    this.surnameChanged.pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.filterDrivers());
+
+    this.yearChanged.pipe(debounceTime(0), takeUntil(this.destroy$))
+      .subscribe(() => this.fetchYearDrivers());
   }
 
   ngOnDestroy(): void {
@@ -47,32 +52,58 @@ export class DriverSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onInputChange(value: string): void {
-    this.searchTermChanged.next(value);
-  }
-
-  // Método para la búsqueda manual (botón)
-  onManualSearch(): void {
-    if (this.searchTerm.trim() === '') {
-      this.nzMessageService.warning('Por favor, ingresa un término de búsqueda.');
-      return;
+  onYearChange(v: string) {
+    const n = Number(v);
+    if (!Number.isNaN(n) && n >= 1950) {
+      this.year = n;
+      this.yearChanged.next(n);
     }
-    this.performSearch(this.searchTerm);
+  }
+  onNameChange(v: string) {
+    this.name = v;
+    this.nameChanged.next(v);
+  }
+  onSurnameChange(v: string) {
+    this.surname = v;
+    this.surnameChanged.next(v);
   }
 
-  // Lógica de búsqueda rea
-  performSearch(query: string): void {
-    this.f1ApiService.searchDrivers(query).subscribe({
-      next: (response: DriversApiResponse) => {
-        this.drivers = response.drivers;
-        if (this.drivers.length === 0) {
-          this.nzMessageService.info('No se encontraron pilotos con el término de búsqueda.');
+  onSearchClick() {
+    this.fetchYearDrivers();
+  }
+
+  private fetchYearDrivers() {
+    this.loading = true;
+    this.searchedOnce = true;
+    this.f1ApiService.getDriversByYear(this.year).subscribe({
+      next: (resp: DriversApiResponse) => {
+        this.allDrivers = resp.drivers ?? [];
+        this.filterDrivers();
+        this.loading = false;
+        if (!this.allDrivers.length) {
+          this.msg.info(`No hay pilotos para ${this.year}.`);
         }
       },
-      error: (err: any) => {
-        console.error('Error searching drivers:', err);
-        this.nzMessageService.error('Ocurrió un error al buscar pilotos.');
+      error: (err) => {
+        this.loading = false;
+        this.allDrivers = [];
+        this.drivers = [];
+        this.msg.error(`Error obteniendo pilotos de ${this.year}.`);
+        console.error(err);
       }
+    });
+  }
+
+  private filterDrivers() {
+    const n = this.name.trim().toLowerCase();
+    const s = this.surname.trim().toLowerCase();
+    const useName = n.length >= 4;
+    const useSurname = s.length >= 4;
+
+    this.drivers = this.allDrivers.filter(d => {
+      const okName = !useName || d.name?.toLowerCase().includes(n);
+      const okSurname = !useSurname || d.surname?.toLowerCase().includes(s);
+      return okName && okSurname;
     });
   }
 }

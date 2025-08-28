@@ -1,1 +1,27 @@
-<p>standings works!</p>
+<h2>Clasificaciones de la Temporada {{ year }}</h2>
+
+<div style="margin-bottom: 20px;">
+  <label for="yearInput">Año:</label>
+  <input id="yearInput" nz-input type="number" [(ngModel)]="year" (change)="loadStandings()" style="width: 120px; margin-left: 10px;" />
+</div>
+
+<div *ngIf="(!driverStandings || driverStandings.length === 0) && (!constructorStandings || constructorStandings.length === 0); else chartsDisplay" style="text-align: center; padding: 20px;">
+  <p>Cargando clasificaciones o no hay datos para el año {{ year }}...</p>
+</div>
+
+<ng-template #chartsDisplay>
+  <div nz-row [nzGutter]="[16, 16]">
+    <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12">
+      <div echarts [options]="driverChartOption" [autoResize]="true" style="height: 400px;"></div>
+    </div>
+    <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12">
+      <div echarts [options]="constructorChartOption" [autoResize]="true" style="height: 400px;"></div>
+    </div>
+      <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12">
+        <div echarts [options]="driverChartOptionPoints" [autoResize]="true" style="height: 400px;"></div>
+      </div>
+    <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12">
+      <div echarts [options]="constructorChartOptionPoints" [autoResize]="true" style="height: 400px;"></div>
+    </div>
+  </div>
+</ng-template>

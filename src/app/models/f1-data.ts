@@ -37,3 +37,58 @@ export interface DriversApiResponse {
   total: number;
   drivers: Driver[];
 }
+
+export interface DriverChampionshipStanding {
+  driver: {
+    driverId: string;
+    name: string;
+    surname: string;
+    nationality: string;
+    url: string;
+  };
+  position: number;
+  points: number;
+  wins: number;
+  constructor: {
+    constructorId: string;
+    name: string;
+    nationality: string;
+    url: string;
+  };
+  status: string;
+}
+
+export interface ConstructorChampionshipStanding {
+  team: {
+    teamId: string;
+    teamName: string;
+    country: string;
+    firstAppeareance: number | null;
+    constructorsChampionships: number | null;
+    driversChampionships: number | null;
+    url: string;
+  };
+  position: number;
+  points: number;
+  wins: number;
+}
+
+export interface DriverChampionshipApiResponse {
+  api: string;
+  url: string;
+  season: number;
+  limit: number;
+  offset: number;
+  total: number;
+  drivers_championship: DriverChampionshipStanding[];
+}
+
+export interface ConstructorChampionshipApiResponse {
+  api: string;
+  url: string;
+  season: number;
+  limit: number;
+  offset: number;
+  total: number;
+  constructors_championship: ConstructorChampionshipStanding[];
+}

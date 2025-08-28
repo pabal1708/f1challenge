@@ -5,6 +5,7 @@
 
 app-sidebar {
   width: 200px;
+  min-width: 200px; /* Asegura un ancho mínimo en escritorios */
   background-color: #f0f0f0;
   padding: 1rem;
 }
@@ -12,4 +13,16 @@ app-sidebar {
 .content {
   flex-grow: 1;
   padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    width: 100%; /* La barra lateral ocupa todo el ancho en móviles */
+    height: auto; /* Altura automática */
+    min-width: unset; /* Eliminar el mínimo en móviles */
+  }
 }

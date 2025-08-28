@@ -5,9 +5,9 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
-  template: `<router-outlet></router-outlet>`,
+  template: `<h1 class="title-main">{{ title }}</h1><router-outlet></router-outlet>`,
   styleUrls: ['./app.css']
 })
 export class AppComponent {
-  title = 'f1challenge';
+  title = 'F1 Challenge';
 }

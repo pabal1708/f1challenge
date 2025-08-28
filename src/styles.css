@@ -1,3 +1,9 @@
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
 
 /* You can add global styles to this file, and also import other style files */
+
+body {
+  background: linear-gradient(to right, #ece9e6, #ffffff); /* Gradiente de claro a blanco */
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
